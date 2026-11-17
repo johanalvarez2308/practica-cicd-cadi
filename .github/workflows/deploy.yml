@@ -1,0 +1,41 @@
+name: CI-CD CADI
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  integracion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+      - name: Prueba 1 - el archivo existe
+        run: test -f index.html && echo "OK: index.html existe"
+      - name: Prueba 2 - contiene el contenido esperado
+        run: grep -q "CADI" index.html && echo "OK: la pagina menciona CADI"
+
+  entrega:
+    needs: integracion
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+      - name: Preparar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Empaquetar el sitio
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - name: Publicar en la nube (GitHub Pages)
+        id: deployment
+        uses: actions/deploy-pages@v4
