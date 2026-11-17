@@ -14,12 +14,12 @@ jobs:
   integracion:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar el código
+      - name: Descargar el codigo
         uses: actions/checkout@v4
       - name: Prueba 1 - el archivo existe
-        run: test -f index.html && echo "OK: index.html existe"
+        run: test -f index.html
       - name: Prueba 2 - contiene el contenido esperado
-        run: grep -q "CADI" index.html && echo "OK: la pagina menciona CADI"
+        run: grep -q CADI index.html
 
   entrega:
     needs: integracion
@@ -28,7 +28,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Descargar el código
+      - name: Descargar el codigo
         uses: actions/checkout@v4
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
@@ -36,6 +36,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: "."
-      - name: Publicar en la nube (GitHub Pages)
+      - name: Publicar en la nube
         id: deployment
         uses: actions/deploy-pages@v4
